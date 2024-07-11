@@ -1,0 +1,393 @@
+basic old flow
+    1. main calls gameRunner:run()
+    2. gameRunner:Run()
+        a. Agent:initializeAgent(PlayerString) x4
+        b. create SnakeState instance x4
+        c. draw screen
+            set points equal to snake.player
+        d. DrawingLibrary:scheduleNextUpdate(_, () => gameRunner:step(stuff...))
+    3. gameRunner:step(steptime,newApplesEachStep,screen,snakestates...)
+        a. gen apples
+            within window, make x amount of apples on screen
+        b. movement x4, one for each snake, A->D
+            b.1. if snakeX hasn't lost yet
+                    i. set temp to be where snakeX would move, 
+                        temp = gameRunner:locationAfterMotion(Agent:agentMove("C", gameRunner:getScreenPart(screen, snakeC)), snakeC);
+                    ii. if snake will hit edge of screen, set lost to true
+                    iii. else move
+                            if nothing there move, snakeX.setPoint, update screen to snake player
+                            if apple there move and get apple
+                            else set lose flag to true
+
+
+
+plan at start
+    make Agent Class in AgentType
+        - contains player, state, SnakeState
+        - has constructor
+        - has movement function which can be modified via interface and set memeber function
+
+        ```
+        //AgentType.ts
+        export type Player = ...;
+        export type Motion = ...;
+        export class point{...}
+        export class SnakeState{...}
+
+        export interface MovementModifier {
+            modifyMovement():Motion;
+        }
+
+        export class Agent {
+            private player:Player;
+            state: number[];
+            snakeState: SnakeState;
+
+            constructor(player:Player, state: number[], snakeState:SnakeState){
+                this.player = player;
+                this.state = state;
+                this.snakeState = snakeState;
+            }
+
+            movement():Motion;
+            setMovement(modifier:MovementModifier);
+            getPlayer():Player;
+        }
+        ```
+
+    move snakeState and point to AgentType
+        - snakeState should be contained within the definition of Agent
+        - create getters and setters
+    modify gameRunner 
+        - import point and snakeState if necessary
+        - modify initializeAgent to somehow find the new agents
+
+        ```
+        import {snakestate, agent, player, motion} from "./AgentType"
+        initializeAgent():Agent;
+        run(){
+            // get agents objects
+            // attatch snakestate
+            step(agents, other stuff)
+        } 
+
+        step(...){
+            // get list of agents
+            // do move for each agent
+        }
+        ```
+
+    create agents folder
+        - have a headerish file that contains logic for finding the agent files
+        - be able to export this list from header file
+
+        ```
+    
+        // AgentManager.ts
+        import {...} from "./xAgent"
+        export getAgents():Agent[]{
+            // read the agent type folder for agents
+            // create agent objects
+            return arrayOfCreatedAgents;
+        }
+        // Example and/or RightAgent
+        import { Agent, MovementModifier, Player, Motion } from "../Agent";
+        import { SnakeState } from "../GameRunner";
+
+        class CustomMovementModifier implements MovementModifier {
+            modifyMovement(): Motion {
+            // Custom movement logic
+            return "right";
+            }
+        }
+        export function init(player:Player,snakeState:SnakeState):Agent{
+            const s: number[] = [];
+            const agent = new Agent(player, s,snakeState);
+            const customModifier = new CustomMovementModifier();
+
+            agent.setMovement(customModifier);
+            return agent;
+        }
+
+        // Cycle
+            ...
+            class CustomMovementModifier implements MovementModifier {
+                modifyMovement(agent:Agent): Motion {
+                    // Custom movement logic
+                    // define movement
+                    const cycle: Motion[] = ["up", "up", "right", "down", "right"];
+                    const c: Motion = cycle[agent.state[0]];
+                    agent.state[0]++;
+                    agent.state[0] = agent.state[0] % cycle.length;
+                    return c;
+                }
+            }
+            export function init(player:Player, snakeState:SnakeState):Agent{
+                const s: number[] = [0];
+                const agent = new Agent(player, s, snakeState);
+                const customModifier = new CustomMovementModifier();
+
+                agent.setMovement(customModifier);
+                return agent;
+            }
+
+        ...
+
+        // Stair
+            ...
+            class CustomMovementModifier implements MovementModifier {
+                modifyMovement(agent:Agent): Motion {
+                    // Custom movement logic
+                    const cycle: Motion[] = ["up",  "left"];
+                    // select index 0 if even, select 1 if odd
+                    const index = agent.state[0] % 2;
+                    const c: Motion = cycle[index];
+                    // if count is 0 or less
+                    if( agent.state[1] <= 0){
+                        // increase index
+                        agent.state[0]++; 
+                        //
+                        if(agent.state[0]%2 != 0){
+                            agent.state[2]++
+                        }
+                        agent.state[1] = agent.state[2];
+                    }
+                    else {
+                        agent.state[1]--;
+                    }
+                    return c;
+
+                    }
+                }
+            export function init(player:Player,snakeState:SnakeState):Agent{
+                const s: number[] = [0,0,0];
+                const agent = new Agent(player, s, snakeState);
+                const customModifier = new CustomMovementModifier();
+
+                agent.setMovement(customModifier);
+                return agent;
+            }
+            
+
+        // Tuesday
+            import { LocalDate, DayOfWeek } from "@js-joda/core";
+            ...
+            // Agent type that 
+            // always moves up on Tuesdays and always moves down on other days
+            // using the js-joda library 
+
+            class CustomMovementModifier implements MovementModifier {
+            modifyMovement(): Motion {
+                // Custom movement logic
+                const today = LocalDate.now();
+                if (today.dayOfWeek() === DayOfWeek.TUESDAY) {
+                return "up";
+                } else {
+                return "down";
+                }
+            }
+            }
+
+            export function init(player:Player, snakeState:SnakeState):Agent{
+                const s: number[] = [];
+                const agent = new Agent(player, s, snakeState);
+                const customModifier = new CustomMovementModifier();
+
+                agent.setMovement(customModifier);
+                return agent;
+            }
+
+        ```
+
+plan at middle
+    make Agent Class in AgentType
+        - contains player, state, SnakeState(?)
+            + Snakestate could be interpreted as a gamerule, i think i might leave it where it is
+        - has constructor
+        - has movement function which can be modified via interface and set memeber function
+    initializeAgent 
+        - its weird that it is being called where it is
+            + where do i put it?
+            + i currently have 
+    agents
+        - so i'm thinking that all i need to do is:
+            + initialize the state size 
+            + modify movement 
+            + return an agent
+        
+    getting agents to gamerunner
+        - do I want to just call these things by name somewhere?
+            + easy
+        - or have a helper that gets everything
+            + extensible
+    big questions
+        - auto read all new agent files?
+        - clean up agent?
+        - select agents somehow?
+        - include the initialization behaviour in AgentType
+        - what to do with screenpart functionality
+            + retain functionality even if not used currently
+        - privacy
+    todo:
+        - get initialization where i want it
+        - 
+
+
+plan 3/4th
+    whats going on
+        - refactored code in gameRunner,Agent,AgentType
+        - things are working
+        - Realized that I need snakes to hold their snakeState to be able to know where they are in their custom files
+
+    what is good
+        - snakes hold their own state, snakestate, player
+            + allows for full functionality of movement when creating new agent file
+                a. can do complex movements with agent.state b/c of flexible nature of snake.state array
+                b. can do space aware movments because snakes hold their own location data
+                    - would need to import getScreenPart/other things in new file
+        - initialization is mostly good
+            get constants in gamerunner, pass those around, work on those
+    
+    what is bad
+        - snake data
+            + not sure about how js/ts manages objects and memory
+                it would be bad if we're just creating tons of copies
+            + privacy
+                a. I feel like I should be writing getters and setters
+                b. I don't like getter and setters, I think they're messy
+                c. Do I want to keep members private?
+                    - Is it necessary for the scope of the program?
+                    - Is it necessary for the scope of the course?
+        - gameRunner
+            + code could use somy DRYing up
+                step specifically, it would be better to have an array of snakes and operate on each in order
+                    as opposed to having an if statement for each possible snake
+        - initialization
+            + calling from gamerunner, 
+                exported from agent, 
+                    where a switch statement is selecting from hardcoded imports
+            + if i wanted this to be more extensible, 
+                i should not require a new agent to be hardcoded into Agent 
+        - my git repo is an absolute mess
+            + I've switched from OSX to windows, powershell is weird
+        - Player & Motion types
+            + I've got these repeated in multiple locations
+            + Not sure where it makes the most sense to declare
+    todo
+        - fix the bad stuff
+        - [x] pick a home for Player, Motion
+        - DRY up GameRunner?
+        - Encapsulate? rewatch lectures
+
+    intermediate thoughts
+        - initialization: I want to arrange things to only require the addition of a snake agent file
+            + I think this is beyond what I can do in this iteration
+                a. I would need some dynamic file parsing, to do that I would need to change the version of typescript
+                b. This is a can of worms best left to a later refactor
+            + I'm gonna leave this as it is currently.
+                a. User adds an agent, hardcodes it into agent
+                    - This keeps things at a place where only 1 file needs to be modified (Agent.ts) and only 1 file needs to be added per player.
+                    
+            
+plan 5/6ths
+    what is going on
+        - dryed up gameRunner
+        - Player, Motion only in Agent.ts
+    - DRYing GameRunner notes
+        - some modification to game behavior
+            - updating snakeState.lost will take a bit longer b/c of loop updating, could be an issue if there were like a million snakes
+        - much clearer to read
+    - questions
+        - Encapsulation
+            + still need to figure out how encapsulated I need to make things
+        - Agent.ts vs AgentType
+            + So, after doing things I've found a conceptual problem, what should be in Agent and what should be in AgentType
+                1. originally I wanted the agent class in AgentType. That doesn't quite make sense though.
+                    - naming conventions dictate that Agent.ts should contain the class
+                    - Player and Motion are in Agent, are required for my Agent Class, makes sense to put the class in there
+                2. If the Agent Class should be in agent, what shoudl be in AgentType?
+                    - maybe thats where I do the whole importing thing. 
+            + What to do
+                1. put Agent class in Agent
+                2. put initialization logic into AgentType
+
+plan 7/8ths
+    a. Agent & AgentType
+        - Move Agent Class to Agent.ts
+        - Move initialization logic to AgentType
+        - change imports in GameRunner, xAgents to Agent.ts
+    b. Encapsulation
+        - Watch classes again
+        - Make determination on what I need
+        - either submit or make getters and setters
+    c. Comments
+        - Fell behind on commenting, need to update/add where missing
+    Todo:
+        a. [x] 
+        b. [x]
+        c. [x]
+
+plan last bit
+    a. i've confused agent.ts and agentType.ts
+        [] move agent definition to AgentType.ts
+        [] move initialization of agents to Agent.ts
+    b. Rereading the instructions I see that we shouldn't be using SnakeState, we can only use screenPart.
+        [x] implement and test screenpart usage
+        [] Snakestate
+            - Currently attatched to snakes lots of benefit for reducing code
+            - We don't want players to be able to use it, but they possibly can.
+                Options:
+                    1. [] just don't tell the user about it, its not super useful and you know what, good on them if they find it, it could be fun.
+                    2. [] somehow limit them from getting at it without refactoring.
+                    3. [] refactor to limit access
+                        - separate snakesate from snakes.
+                        - ugh.
+                        plan.
+                            1. take snakestate out of snake init
+                            2. make tuples in gamerunner of (snake,snakeState)
+                                - this minizes refactoring and solves our problem.
+
+
+
+Complete
+    Learned/Conclusions:
+        - "Everyone has a plan until they get punched in the face."
+            + So in the spirit of the course, I wrote out my plan. I followed it.
+                - I had to amend my plan, several times. It turns out that my initial plan was not *it*. 
+                - I suppose that is one of the core concepts of the course, 
+                    which is: students need to learn how to plan more effectively. 
+                - Practice makes *better*, perfect is a platonic ideal. 
+                    + I didn't expect my initial plan to work in its entirety.
+                    + My initial interpretation of the code was close, but as I put my plan into action I discovered the holes in it.
+                    + specifically, I found that I had made some big gaps in planning logic. 
+                        - there were portions that I believed would work that did not in the context.
+                        - I didn't involve all parts of my knowledge base in my plan.
+                            + I didn't infer how best practices would inform my plan as well as I could have.
+                                - For example, I should/could have inferred from the import/export structure and file names more about my refactoring structure.
+        - "The last 10% of work takes 50% of the time."
+            + getting my files/changes to work felt like the big hurdle. 
+            + It was not, making sure that my code was following best practices took much longer.
+                - Returning to my work after such a long break was difficult
+                - I was glad for the comments and plans I had left behind
+    Concerns:
+        - Implementation of Interface
+            + It works.
+            + Should it be private?
+                - As a rule of thumb, "encapsule what changes"
+                    Interface changes motion for agents
+                    Maybe should be private
+        - Encapsulation
+            + I decided to make snake data private.
+                - because of the need for access in motion modification, I used getters and setters to essentially make them public.
+                - What is my Implementation of private members really doing for my code?
+            + It was fairly easy to do, 
+            + I would make an argument for extensiblility. 
+                - A future dev might find a need/use for the encapsulation, in which case it is already present.   
+            + Maybe I should have made some members protected rather than private.
+        - Agent.ts and AgentType.ts
+            + Looking back at the assignment, it appears that AgentType.ts was intended to contain the Agent class.
+            + From my knowledge, classes are typically described in a file sharing the name.
+            + If I was a dev looking at the code after my refactor, I would expect the code to follow that pattern.
+                - Therefore I beleive I am justified in my actions.
+            + AgentType.ts containing the logic for selecting created agents also makes sense to me.
+                - Even if it is not the perfect naming convention. 

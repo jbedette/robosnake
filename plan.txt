@@ -1,0 +1,88 @@
+John Bedette
+5/16/24... ish
+
+sources:
+    Eslint for maintaining best practices in code formatting
+
+basic flow
+    1. main calls gameRunner:run()
+    2. gameRunner:Run()
+        a. Agent:initializeAgent(PlayerString) x4
+        b. create SnakeState instance x4
+        c. draw screen
+            set points equal to snake.player
+        d. DrawingLibrary:scheduleNextUpdate(_, () => gameRunner:step(stuff...))
+    3. gameRunner:step(steptime,newApplesEachStep,screen,snakestates...)
+        a. gen apples
+            within window, make x amount of apples on screen
+        b. movement x4, one for each snake, A->D
+            b.1. if snakeX hasn't lost yet
+                    i. set temp to be where snakeX would move, 
+                        temp = gameRunner:locationAfterMotion(Agent:agentMove("C", gameRunner:getScreenPart(screen, snakeC)), snakeC);
+                    ii. if snake will hit edge of screen, set lost to true
+                    iii. else move
+                            if nothing there move, snakeX.setPoint, update screen to snake player
+                            if apple there move and get apple
+                            else set lose flag to true
+
+
+
+plan
+    make Agent Class in AgentType
+        - contains player, state, SnakeState
+        - has constructor
+        - has movement function which can be modified via interface and set memeber function
+
+        ```
+        //AgentType.ts
+        export type Player = ...;
+        export type Motion = ...;
+        export class point{...}
+        export class SnakeState{...}
+
+        export interface MovementModifier {
+            modifyMovement():Motion;
+        }
+
+        export class Agent {
+            private player:Player;
+            state: number[];
+            snakeState: SnakeState;
+
+            constructor(player:Player, state: number[], snakeState:SnakeState){
+                this.player = player;
+                this.state = state;
+                this.snakeState = snakeState;
+            }
+
+            movement():Motion;
+            setMovement(modifier:MovementModifier);
+            getPlayer():Player;
+        }
+        ```
+
+    move snakeState and point to AgentType
+        - snakeState should be contained within the definition of Agent
+        - create getters and setters
+    modify gameRunner 
+        - import point and snakeState if necessary
+        - modify initializeAgent to somehow find the new agents
+
+        ```
+        import {snakestate, agent, player, motion} from "./AgentType"
+        initializeAgent():Agent;
+        run(){
+            // get agents objects
+            // attatch snakestate
+            step(agents, other stuff)
+        } 
+
+        step(...){
+            // get list of agents
+            // do move for each agent
+        }
+        ```
+
+    create agents folder
+        - have a headerish file(AgentManager.ts) that contains logic for finding the agent files
+        - be able to export this list from header file

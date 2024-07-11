@@ -1,0 +1,8 @@
+ass3,
+    code
+        add comments on agents
+        add comment on agent.ts
+        add commment on AgentType.ts
+    plan
+        add definitions for agents
+
