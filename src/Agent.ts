@@ -1,52 +1,28 @@
-import { ScreenPart, SnakeState } from "./GameRunner";
-
 export type Player = "A" | "B" | "C" | "D";
 
 export type Motion = "up" | "down" | "left" | "right";
 
-// interface for modifying agent movement
-export interface MovementModifier {
-  modifyMovement(agent:Agent,screenPart:ScreenPart): Motion;
-}
 
-// State array is for recording logic about movement
-// snakestate is contained in agent to allow for movment based on game state
-export class Agent {
-  private player: Player;
-  private state: number[];
-  private snakeState: SnakeState;
+import { Agent } from "./AgentType";
+import { ScreenPart } from "./GameRunner";
 
-  constructor(player: Player, state: number[], snakeState:SnakeState) {
-    this.player = player;
-    this.state = state;
-    this.snakeState = snakeState;
-  }
+// Here: import the new agent and its init function
+// for clarity, pleast follow the pattern of 
+//    ` import { init as $UNIQUE_DESCRIPTION } from "./agents/$YOUR_AGENT_FILE_NAME.ts" `
 
-  // Default behavior
-  movement(agent:Agent,screenPart:ScreenPart): Motion {
-    return "up";
-  }
+import { init as GoRight } from "./agents/RightAgent";
+import { init as Cycle} from "./agents/CycleAgent";
+import { init as Stair} from "./agents/StairAgent";
+import { init as Tuesday } from "./agents/TuesdayAgent";
 
-  // Overwrite default movement behavior
-  setMovement(modifier: MovementModifier):void {
-    this.movement = (agent:Agent,screenPart:ScreenPart) => modifier.modifyMovement(agent,screenPart);
-  }
 
-  getPlayer(): Player {
-    return this.player;
-  }
-  getState(): number[] {
-    return this.state;
-  }
-  getSnakeState(): SnakeState {
-    return this.snakeState;
-  }
-
-  setState(state:number[]): void {
-    this.state = state;
-  }
-  setSnakeState(snakeState:SnakeState): void {
-    this.snakeState = snakeState;
+// Edit this function to use your imported agent init function and assign to player
+export function initializeAgent(player: Player): Agent {
+  switch (player) {
+    case "A": return GoRight(player);
+    case "B": return Tuesday(player)
+    case "C": return Cycle(player);
+    case "D": return Stair(player);
   }
 }
 

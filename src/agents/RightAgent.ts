@@ -1,5 +1,5 @@
-import { Agent, MovementModifier, Player, Motion } from "../Agent";
-import { SnakeState } from "../GameRunner";
+import { Agent, MovementModifier } from "../AgentType";
+import { Player, Motion } from "../Agent";
 
 // Agent type that
 // always moves right
@@ -9,9 +9,9 @@ class CustomMovementModifier implements MovementModifier {
     return "right";
   }
 }
-export function init(player:Player,snakeState:SnakeState):Agent{
+export function init(player:Player):Agent{
     const s: number[] = [];
-    const agent = new Agent(player, s,snakeState);
+    const agent = new Agent(player, s);
     const customModifier = new CustomMovementModifier();
 
     agent.setMovement(customModifier);

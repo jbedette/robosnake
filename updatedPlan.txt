@@ -329,8 +329,8 @@ plan 7/8ths
 
 plan last bit
     a. i've confused agent.ts and agentType.ts
-        [] move agent definition to AgentType.ts
-        [] move initialization of agents to Agent.ts
+        [x] move agent definition to AgentType.ts
+        [x] move initialization of agents to Agent.ts
     b. Rereading the instructions I see that we shouldn't be using SnakeState, we can only use screenPart.
         [x] implement and test screenpart usage
         [] Snakestate
@@ -339,13 +339,17 @@ plan last bit
                 Options:
                     1. [] just don't tell the user about it, its not super useful and you know what, good on them if they find it, it could be fun.
                     2. [] somehow limit them from getting at it without refactoring.
-                    3. [] refactor to limit access
+                    3. [x] refactor to limit access
                         - separate snakesate from snakes.
                         - ugh.
                         plan.
                             1. take snakestate out of snake init
                             2. make tuples in gamerunner of (snake,snakeState)
                                 - this minizes refactoring and solves our problem.
+    c. ugh, I forgot about the comment maker thing
+        [] do that
+    d. Rework intro
+        [] do that
 
 
 

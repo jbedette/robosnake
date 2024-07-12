@@ -1,6 +1,6 @@
 import { LocalDate, DayOfWeek } from "@js-joda/core";
-import { Agent, MovementModifier, Player, Motion } from "../Agent";
-import { SnakeState} from "../GameRunner";
+import { Agent, MovementModifier } from "../AgentType";
+import { Player, Motion } from "../Agent";
 
 // Agent type that 
 // always moves up on Tuesdays and always moves down on other days
@@ -19,9 +19,9 @@ class CustomMovementModifier implements MovementModifier {
   }
 }
 
-export function init(player:Player, snakeState:SnakeState):Agent{
+export function init(player:Player):Agent{
     const s: number[] = [];
-    const agent = new Agent(player, s, snakeState);
+    const agent = new Agent(player, s);
     const customModifier = new CustomMovementModifier();
 
     agent.setMovement(customModifier);

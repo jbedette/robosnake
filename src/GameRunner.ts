@@ -1,5 +1,6 @@
-import { agentMove, Motion, Agent } from "./Agent";
-import { initializeAgent } from "./AgentType";
+import { Agent } from "./AgentType";
+import { Motion } from "./Agent";
+import { agentMove, initializeAgent } from "./Agent";
 import { scheduleNextUpdate, updateApples, updateLost } from "./DrawingLibrary";
 import { Cell, draw, GameScreen } from "./GameScreen";
 
@@ -59,10 +60,15 @@ export function run(stepTime: number, newApplesEachStep: number, screen: GameScr
   const b = new SnakeState(screen.length - 1, 0);
   const c = new SnakeState(0, screen.length - 1);
   const d = new SnakeState(screen.length - 1, screen.length - 1);
-  const A = initializeAgent("A",a);
-  const B = initializeAgent("B",b);
-  const C = initializeAgent("C",c);
-  const D = initializeAgent("D",d);
+  const A = initializeAgent("A");
+  const B = initializeAgent("B");
+  const C = initializeAgent("C");
+  const D = initializeAgent("D");
+
+  const snakeA: [SnakeState, Agent] = [a,A];
+  const snakeB: [SnakeState, Agent] = [b,B];
+  const snakeC: [SnakeState, Agent] = [c,C];
+  const snakeD: [SnakeState, Agent] = [d,D];
 
   // draw starting screen
   screen[a.y][a.x] = "A";
@@ -72,7 +78,7 @@ export function run(stepTime: number, newApplesEachStep: number, screen: GameScr
   draw(screen);
 
   // this will wait for stepTime milliseconds and then call step with these arguments
-  scheduleNextUpdate(stepTime, () => step(stepTime, newApplesEachStep, screen, A, B, C, D));
+  scheduleNextUpdate(stepTime, () => step(stepTime, newApplesEachStep, screen, snakeA, snakeB, snakeC, snakeD));
   // the "() =>" part is important!
   // without it, step will get called immediately instead of waiting
 }
@@ -90,10 +96,10 @@ export function step(
   stepTime: number,
   newApplesEachStep: number,
   screen: GameScreen,
-  snakeA: Agent,
-  snakeB: Agent,
-  snakeC: Agent,
-  snakeD: Agent
+  snakeA: any,
+  snakeB: any,
+  snakeC: any,
+  snakeD: any
 ): void {
   // make snake array
   const snakes = [snakeA,snakeB,snakeC,snakeD];
@@ -110,22 +116,22 @@ export function step(
   // iterate through snake array
   // players take turns in order: A -> B -> C -> D -> A -> B -> C -> D -> ...
   snakes.forEach((snake) => {
-    const snakeState = snake.getSnakeState();
+    const snakeState = snake[0];
     if (!snakeState.lost) {
-      const temp = locationAfterMotion(agentMove(snake, getScreenPart(screen, snake.getSnakeState())), snake.getSnakeState());
+      const temp = locationAfterMotion(agentMove(snake[1], getScreenPart(screen, snakeState)), snakeState);
       if (temp.x < 0 || temp.y < 0 || temp.x >= screen.length || temp.y >= screen.length) // hit the edge of the screen
         snakeState.lost = true;
       else
         switch (screen[temp.y][temp.x]) {
           case "empty": { // make the move
             snakeState.setPoint(temp);
-            screen[temp.y][temp.x] = snake.getPlayer();
+            screen[temp.y][temp.x] = snake[1].getPlayer();
             break;
           }
           case "apple": { // make the move and eat the apple
             snakeState.setPoint(temp);
             snakeState.apples++;
-            screen[temp.y][temp.x] = snake.getPlayer();
+            screen[temp.y][temp.x] = snake[1].getPlayer();
             break;
           }
           default: { // lose
@@ -134,7 +140,7 @@ export function step(
           }
         }
     }
-    snake.setSnakeState(snakeState);
+    snake[0] = snakeState;
   });
 
   // update game screen
@@ -142,10 +148,10 @@ export function step(
 
   // update snake statistics
   snakes.forEach((snake) => {
-    updateLost(snake.getPlayer(), snake.getSnakeState().lost); updateApples(snake.getPlayer(), snake.getSnakeState().apples);
+    updateLost(snake[1].getPlayer(), snake[0].lost); updateApples(snake[1].getPlayer(), snake[0].apples);
   });
   
   // run again unless everyone has lost
-  if (!snakeA.getSnakeState().lost || !snakeB.getSnakeState().lost || !snakeC.getSnakeState().lost || !snakeD.getSnakeState().lost)
+  if (!snakeA[0].lost || !snakeB[0].lost || !snakeC[0].lost || !snakeD[0].lost)
     scheduleNextUpdate(stepTime, () => step(stepTime, newApplesEachStep, screen, snakeA, snakeB, snakeC, snakeD));
 }

@@ -1,25 +1,40 @@
-import { Player, Agent } from "./Agent";
-import { SnakeState } from "./GameRunner";
+import { Player, Motion } from "./Agent";
+import { ScreenPart } from "./GameRunner";
 
-// Here: import the new agent and its init function
-// for clarity, pleast follow the pattern of 
-//    ` import { init as $UNIQUE_DESCRIPTION } from "./agents/$YOUR_AGENT_FILE_NAME.ts" `
+// interface for modifying agent movement
+export interface MovementModifier {
+  modifyMovement(agent:Agent,screenPart:ScreenPart): Motion;
+}
 
-// import { init as GoRight } from "./agents/RightAgent";
-import { init as screenPart } from "./agents/ScreenPartAgent";
+// State array is for recording logic about movement
+// snakestate is contained in agent to allow for movment based on game state
+export class Agent {
+  private player: Player;
+  private state: number[];
 
-import { init as Cycle} from "./agents/CycleAgent";
-import { init as Stair} from "./agents/StairAgent";
-import { init as Tuesday } from "./agents/TuesdayAgent";
+  constructor(player: Player, state: number[]) {
+    this.player = player;
+    this.state = state;
+  }
 
+  // Default behavior
+  movement(agent:Agent,screenPart:ScreenPart): Motion {
+    return "up";
+  }
 
-// Edit this function to use your imported agent init function and assign to player
-export function initializeAgent(player: Player,s:SnakeState): Agent {
-  switch (player) {
-    // case "A": return GoRight(player,s);
-    case "A": return screenPart(player,s);
-    case "B": return Tuesday(player, s)
-    case "C": return Cycle(player,s);
-    case "D": return Stair(player,s);
+  // Overwrite default movement behavior
+  setMovement(modifier: MovementModifier):void {
+    this.movement = (agent:Agent,screenPart:ScreenPart) => modifier.modifyMovement(agent,screenPart);
+  }
+
+  getPlayer(): Player {
+    return this.player;
+  }
+  getState(): number[] {
+    return this.state;
+  }
+
+  setState(state:number[]): void {
+    this.state = state;
   }
 }
