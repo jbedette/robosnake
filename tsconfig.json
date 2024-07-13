@@ -19,6 +19,6 @@
     "entryPoints": ["src"],
     "entryPointStrategy": "expand",
     "out": "docs",
-    "readme": "none"
+    "readme": "INTRO.md"
   }
 }

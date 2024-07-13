@@ -9,5 +9,5 @@ export function play(): void {
   updateLost("C", false); updateApples("C", 0);
   updateLost("D", false); updateApples("D", 0);
   const screen = initialize(50);
-  run(1, 10, screen);
+  run(1000, 10, screen);
 }

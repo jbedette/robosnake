@@ -1,17 +1,24 @@
 import { Agent, MovementModifier } from "../AgentType";
 import { Player, Motion } from "../Agent";
 
-// Agent type that moves 
-// left one time, 
-// up one time, 
-// left two times, 
-// up two times, 
-// left three times, 
-// up three times, etc. 
-// The number of moves in each direction should keep increasing until the player has lost. 
-// uses state to determine which movment to take
+/**
+ * 
+ * @fileoverview Agent type that moves 
+ * left one time, 
+ * up one time, 
+ * left two times, 
+ * up two times, 
+ * left three times, 
+ * up three times, etc. 
+ * The number of moves in each direction should keep increasing until the player has lost. 
+ * uses state to determine which movment to take
+ */
 
 class CustomMovementModifier implements MovementModifier {
+  /**
+   * Define custom movement here 
+   * @returns Motion
+   */
   modifyMovement(agent:Agent): Motion {
     const currState = agent.getState();
     const cycle: Motion[] = ["up",  "left"];
@@ -35,6 +42,10 @@ class CustomMovementModifier implements MovementModifier {
   }
 }
 
+/**
+ * @param player 
+ * @returns Agent with custom movement
+ */
 export function init(player:Player):Agent{
     const s: number[] = [0,0,0];
     const agent = new Agent(player, s);

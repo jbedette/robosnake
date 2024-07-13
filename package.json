@@ -12,7 +12,7 @@
     "terser-webpack-plugin": "^5.3.9",
     "ts-loader": "^9.5.0",
     "ts-webpack": "^1.0.0",
-    "typedoc": "^0.25.3",
+    "typedoc": "^0.25.13",
     "typescript": "^5.2.2",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",

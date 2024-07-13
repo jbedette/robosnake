@@ -1,3 +1,11 @@
+John Bedette
+Code Reading Fall '23
+
+Foreword:
+In working on this project, I used eslint for code organization, and I also used ChatGPT for my initial testing of interfaces.
+Though I initially used some code from ChatGPT for the planning and testing of my interfaces,
+that code is nearly unrecognizable from that starting point and I feel confident that I have not violated academic integrity. 
+
 basic old flow
     1. main calls gameRunner:run()
     2. gameRunner:Run()
@@ -350,6 +358,8 @@ plan last bit
         [] do that
     d. Rework intro
         [] do that
+    e. Rexamine comments
+        [] do that
 
 
 
@@ -373,25 +383,7 @@ Complete
             + It was not, making sure that my code was following best practices took much longer.
                 - Returning to my work after such a long break was difficult
                 - I was glad for the comments and plans I had left behind
-    Concerns:
-        - Implementation of Interface
-            + It works.
-            + Should it be private?
-                - As a rule of thumb, "encapsule what changes"
-                    Interface changes motion for agents
-                    Maybe should be private
-        - Encapsulation
-            + I decided to make snake data private.
-                - because of the need for access in motion modification, I used getters and setters to essentially make them public.
-                - What is my Implementation of private members really doing for my code?
-            + It was fairly easy to do, 
-            + I would make an argument for extensiblility. 
-                - A future dev might find a need/use for the encapsulation, in which case it is already present.   
-            + Maybe I should have made some members protected rather than private.
-        - Agent.ts and AgentType.ts
-            + Looking back at the assignment, it appears that AgentType.ts was intended to contain the Agent class.
-            + From my knowledge, classes are typically described in a file sharing the name.
-            + If I was a dev looking at the code after my refactor, I would expect the code to follow that pattern.
-                - Therefore I beleive I am justified in my actions.
-            + AgentType.ts containing the logic for selecting created agents also makes sense to me.
-                - Even if it is not the perfect naming convention. 
+            + It was difficult retaining what was said in lecture and applying it over such a long time.
+                - I am finishing up this incomplete, there were many times that I simply forgot what was mentioned in lecture between work periods.
+                - I did rewatch all the lectures several times to make sure I got everything in the end. 
+                

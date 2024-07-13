@@ -1,13 +1,19 @@
 import { Player, Motion } from "./Agent";
 import { ScreenPart } from "./GameRunner";
 
-// interface for modifying agent movement
+/** 
+ *  @fileoverview interface for modifying agent movement
+ */
 export interface MovementModifier {
   modifyMovement(agent:Agent,screenPart:ScreenPart): Motion;
 }
 
-// State array is for recording logic about movement
-// snakestate is contained in agent to allow for movment based on game state
+/**
+ * 
+ * State array is for recording logic about movement
+ * snakestate is contained in agent to allow for movment based on game state
+ * @param
+ */
 export class Agent {
   private player: Player;
   private state: number[];

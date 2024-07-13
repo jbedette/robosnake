@@ -1,11 +1,18 @@
 import { Agent, MovementModifier } from "../AgentType";
 import { Player, Motion } from "../Agent";
 
-// Agent type that 
-// cycles through the moves 
-// up, up, right, down, right,
+/**
+ * @fileoverview Agent type that 
+ * cycles through the moves 
+ * up, up, right, down, right,
+ * 
+ */
 
 class CustomMovementModifier implements MovementModifier {
+  /**
+   * Define custom movement here 
+   * @returns Motion
+   */
   modifyMovement(agent:Agent) {
     const currState = agent.getState();
     const cycle: Motion[] = ["up", "up", "right", "down", "right"];
@@ -21,6 +28,10 @@ class CustomMovementModifier implements MovementModifier {
   }
 }
 
+/**
+ * @param player 
+ * @returns Agent with custom movement
+ */
 export function init(player:Player):Agent{
     const s: number[] = [0];
     const agent = new Agent(player, s);
