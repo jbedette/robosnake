@@ -6,6 +6,7 @@ import { Player, Motion } from "../Agent";
  * cycles through the moves 
  * up, up, right, down, right,
  * 
+ * {@link Agent}
  */
 
 class CustomMovementModifier implements MovementModifier {
