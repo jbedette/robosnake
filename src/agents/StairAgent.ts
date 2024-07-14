@@ -3,7 +3,7 @@ import { Player, Motion } from "../Agent";
 
 /**
  * 
- * @fileoverview Agent type that moves 
+ * Agent type that moves 
  * left one time, 
  * up one time, 
  * left two times, 
@@ -13,8 +13,7 @@ import { Player, Motion } from "../Agent";
  * The number of moves in each direction should keep increasing until the player has lost. 
  * uses state to determine which movment to take
  */
-
-class CustomMovementModifier implements MovementModifier {
+export class CustomMovementModifier implements MovementModifier {
   /**
    * Define custom movement here 
    * @returns Motion

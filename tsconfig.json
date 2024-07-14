@@ -19,6 +19,10 @@
     "entryPoints": ["src"],
     "entryPointStrategy": "expand",
     "out": "docs",
+    "excludePrivate": false,
+    "excludeProtected": false,
+    "excludeInternal": false,
+    "excludeExternals": false,
     "readme": "INTRO.md"
   }
 }

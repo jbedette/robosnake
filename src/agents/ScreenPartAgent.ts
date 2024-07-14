@@ -4,11 +4,10 @@ import { Player, Motion } from "../Agent";
 
 /**
  * 
- * @fileoverview Go for any nearby apple,
+ * Go for any nearby apple,
  * otherwise random
  */
-
-class CustomMovementModifier implements MovementModifier {
+export class CustomMovementModifier implements MovementModifier {
   /**
    * 
    * @param agent 

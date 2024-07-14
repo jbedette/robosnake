@@ -3,17 +3,16 @@ import { Agent, MovementModifier } from "../AgentType";
 import { Player, Motion } from "../Agent";
 
 /**
- * @fileoverview Agent type that 
+ * Agent type that 
  * always moves up on Tuesdays and always moves down on other days
  * using the js-joda library 
  * 
  * @requires jsjoda
  */
-
-class CustomMovementModifier implements MovementModifier {
+export class CustomMovementModifier implements MovementModifier {
   /**
-   * Define custom movement here 
-   * @returns Motion
+   * 
+   * @returns 
    */
   modifyMovement(): Motion {
     const today = LocalDate.now();
